@@ -1,5 +1,5 @@
 import express from "express";
-import { getUsersInRoom, joinRoom, createRoom, leaveRoom } from "../controllers/roomController.js";
+import { getUsersInRoom, joinRoom, createRoom, leaveRoom, joinRoomByQuery } from "../controllers/roomController.js";
 import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -9,6 +9,8 @@ router.post("/", protect, createRoom);
 
 // Join a room
 router.post("/join", protect, joinRoom);
+router.get("/join", protect, joinRoomByQuery);
+
 
 // Leave a room
 router.post("/leave", protect, leaveRoom);
