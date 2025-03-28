@@ -29,7 +29,7 @@ app.use(
     credentials: true, // Allow credentials (cookies, auth headers)
   })
 );
-
+app.options("*", cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
