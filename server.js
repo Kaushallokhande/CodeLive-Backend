@@ -26,7 +26,7 @@ app.use(
     origin: ["http://localhost:3000", "https://codelive-backend.onrender.com"],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
-    allowedHeaders: "Authorization, Content-Type, Accept, auth-token",
+    allowedHeaders: "Authorization, Content-Type, Accept, auth-token,token",
     optionsSuccessStatus: 200,
     exposedHeaders: ["set-cookie"],
   })
