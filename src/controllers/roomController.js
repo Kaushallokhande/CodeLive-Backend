@@ -1,13 +1,9 @@
 import Room from "../models/Room.js";
-import User from "../models/User.js";
 
 export const createRoom = async (req, res) => {
   try {
-    console.log("Entered createRoom");
-
     const { name, isPrivate, password } = req.body;
     const createdBy = req.user._id;
-    console.log("Authenticated user:", req.user);
 
     // Build room data; add creator as a participant
     const roomData = { name, createdBy, isPrivate, participants: [createdBy] };
@@ -21,10 +17,8 @@ export const createRoom = async (req, res) => {
     }
 
     const room = new Room(roomData);
-    console.log("Room instance created:", room);
 
     await room.save();
-    console.log("Room saved successfully");
 
     return res.status(201).json({
       message: "Room created successfully",
