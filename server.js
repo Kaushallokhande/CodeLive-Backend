@@ -23,7 +23,11 @@ const server = http.createServer(app);
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://codelive-backend.onrender.com"],
+    origin: [
+      "http://localhost:3000", 
+      "https://codelive-backend.onrender.com", 
+      "https://codelive.com"
+    ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
     allowedHeaders: "Authorization, Content-Type, Accept, auth-token,token",
@@ -31,6 +35,7 @@ app.use(
     exposedHeaders: ["set-cookie"],
   })
 );
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
