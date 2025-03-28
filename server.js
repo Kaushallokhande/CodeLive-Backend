@@ -23,16 +23,10 @@ const server = http.createServer(app);
 // Middleware
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000", 
-      "https://codelive-backend.onrender.com", 
-      "https://codelive.com"
-    ],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    credentials: true,
-    allowedHeaders: "Authorization, Content-Type, Accept, auth-token,token",
-    optionsSuccessStatus: 200,
-    exposedHeaders: ["set-cookie"],
+    origin: ["http://localhost:3000", "https://codelive.com"], // Allow both local and production origins
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed HTTP methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+    credentials: true, // Allow credentials (cookies, auth headers)
   })
 );
 
