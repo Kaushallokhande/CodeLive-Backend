@@ -9,7 +9,8 @@ router.post("/", protect, createRoom);
 
 // Join a room
 router.post("/join", protect, joinRoom);
-router.get("/join", protect, joinRoomByQuery);
+
+router.get("/joinroom", protect, joinRoomByQuery);
 
 
 // Leave a room
