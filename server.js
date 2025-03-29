@@ -23,7 +23,7 @@ const server = http.createServer(app);
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://codelive.com"], // Allow both local and production origins
+    origin: ["http://localhost:3000", "https://codelive-virid.vercel.app/"], // Allow both local and production origins
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed HTTP methods
     allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
     credentials: true, // Allow credentials (cookies, auth headers)
