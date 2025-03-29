@@ -1,14 +1,14 @@
 import Room from "../models/Room.js";
+import User from "../models/User.js";
+
 
 export const createRoom = async (req, res) => {
   try {
     const { name, isPrivate, password } = req.body;
     const createdBy = req.user._id;
 
-    // Build room data; add creator as a participant
     const roomData = { name, createdBy, isPrivate, participants: [createdBy] };
 
-    // If the room is private, ensure a password is provided
     if (isPrivate) {
       if (!password) {
         return res.status(400).json({ error: "Password is required for private rooms" });
@@ -42,7 +42,7 @@ export const joinRoom = async (req, res) => {
     const { roomId, password } = req.body;
     const userId = req.user._id;
 
-    const room = await Room.findById(roomId).select("+password"); // Fetch password
+    const room = await Room.findById(roomId).select("+password").populate("participants", "username");
     if (!room) return res.status(404).json({ error: "Room not found" });
 
     if (room.isPrivate) {
@@ -50,19 +50,27 @@ export const joinRoom = async (req, res) => {
       if (!isValid) return res.status(401).json({ error: "Invalid password" });
     }
 
-    if (!room.participants.includes(userId)) {
+    let user = await User.findById(userId).select("username");
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    if (!room.participants.some((participant) => participant._id.equals(userId))) {
       room.participants.push(userId);
       await room.save();
     }
 
-    return res.status(200).json({ message: "Joined room successfully", room });
+    return res.status(200).json({
+      message: "Joined room successfully",
+      room,
+      userId,
+      username: user.username, // Include username in response
+    });
   } catch (error) {
     res.status(500).json({ error: "Failed to join room" });
   }
 };
 
 
-// Leave Room
+
 export const leaveRoom = async (req, res) => {
   try {
     const { roomId } = req.body;

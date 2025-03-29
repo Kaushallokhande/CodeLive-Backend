@@ -5,19 +5,14 @@ import Room from "../models/Room.js";
 
 const router = express.Router();
 
-// Create a room
 router.post("/", protect, createRoom);
 
-// Join a room
 router.post("/join", protect, joinRoom);
 
 router.get("/joinroom", protect, joinRoomByQuery);
 
-
-// Leave a room
 router.post("/leave", protect, leaveRoom);
 
-// Get users in a room (✅ Only One Occurrence Now)
 router.get("/:id/users", protect, getUsersInRoom);
 
 router.get("/:roomId", async (req, res) => {
