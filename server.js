@@ -20,21 +20,24 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 
-// Middleware
+// Middleware: Corrected CORS configuration
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://codelive-virid.vercel.app/"], // Allow both local and production origins
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed HTTP methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
-    credentials: true, // Allow credentials (cookies, auth headers)
+    origin: ["http://localhost:3000", "https://codelive-virid.vercel.app"], // No trailing slash for production URL
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
-app.options("*", cors());
+app.options("*", cors()); // Enable pre-flight across all routes
+
 app.use(express.json());
 
+// Health Check Route
 app.get("/", (req, res) => {
   res.send("Health Check OK");
 });
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/rooms", roomRoutes);
