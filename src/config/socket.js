@@ -23,7 +23,8 @@ const socketHandler = (server) => {
         lastActive: new Date(),
       });
 
-      socket.on("code-change", ({ roomId, userId, code }) => {
+      socket.on("code-change", async({ roomId, userId, code }) => {
+        await Room.findByIdAndUpdate(roomId, { code }); 
         socket.to(roomId).emit("code-update", { id: userId, code });
       });
 

@@ -5,6 +5,7 @@ const RoomSchema = new mongoose.Schema({
   name: { type: String, required: true },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   isPrivate: { type: Boolean, default: false },
+  code: { type: String, default: "// Start coding here..." },
   password: { type: String, select: false }, // Store encrypted password
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   lastActive: { type: Date, default: Date.now },
