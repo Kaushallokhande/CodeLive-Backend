@@ -16,24 +16,32 @@ const socketHandler = (server) => {
     socket.on("join-room", async ({ roomId, userId, username }) => {
       socket.join(roomId);
       console.log(`👤 ${username} joined room ${roomId}`);
-
-      // Notify others in the room
       socket.to(roomId).emit("user-joined", { id: userId, username });
 
-      // Add user to participants list
       await Room.findByIdAndUpdate(roomId, {
         $addToSet: { participants: userId },
         lastActive: new Date(),
       });
 
-      // Handle real-time code updates
-      socket.on("code-change", (code) => {
+      socket.on("code-change", ({ roomId, userId, code }) => {
         socket.to(roomId).emit("code-update", { id: userId, code });
       });
 
-      // Handle cursor tracking
       socket.on("cursor-move", (cursorData) => {
         socket.to(roomId).emit("cursor-move", { id: userId, ...cursorData });
+      });
+
+      socket.on("leave-room", async () => {
+        socket.leave(roomId);
+        console.log(`🚪 ${username} left room ${roomId}`);
+        socket.to(roomId).emit("user-left", { id: userId });
+
+        await Room.findByIdAndUpdate(roomId, { $pull: { participants: userId } });
+      });
+
+      socket.on("disconnect", async () => {
+        console.log(`❌ ${username} disconnected from room ${roomId}`);
+        socket.to(roomId).emit("user-left", { id: userId });
       });
 
       // Handle real-time chat messages
@@ -51,42 +59,6 @@ const socketHandler = (server) => {
           message,
           timestamp: newMessage.timestamp,
         });
-      });
-
-      // Handle room leaving
-      socket.on("leave-room", async () => {
-        socket.leave(roomId);
-        console.log(`🚪 ${username} left room ${roomId}`);
-
-        socket.to(roomId).emit("user-left", { id: userId });
-
-        await Room.findByIdAndUpdate(roomId, {
-          $pull: { participants: userId },
-        });
-
-        // Check if room is empty before deleting
-        const room = await Room.findById(roomId);
-        if (room && room.participants.length === 0) {
-          await Room.deleteOne({ _id: roomId });
-          console.log(`🗑️ Room ${roomId} deleted.`);
-        }
-      });
-
-      // Handle user disconnection
-      socket.on("disconnect", async () => {
-        console.log(`❌ ${username} disconnected from room ${roomId}`);
-        socket.to(roomId).emit("user-left", { id: userId });
-
-        await Room.findByIdAndUpdate(roomId, {
-          $pull: { participants: userId },
-        });
-
-        // Check if room is empty before deleting
-        const room = await Room.findById(roomId);
-        if (room && room.participants.length === 0) {
-          await Room.deleteOne({ _id: roomId });
-          console.log(`🗑️ Room ${roomId} deleted.`);
-        }
       });
     });
   });
